@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/Andre-devel/dimension-lab-backend.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/Andre-devel/dimension-lab-frontend.git
