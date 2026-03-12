@@ -327,4 +327,14 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: início do projeto — Fase 1 a iniciar.*
+---
+
+## ⚠️ 14. Dívidas Técnicas Registradas
+
+| # | Arquivo | Descrição | Quando restaurar |
+|---|---|---|---|
+| 1 | `src/router/index.tsx` | `PrivateRoute role="ADMIN"` removido das rotas `/admin` e `/admin/quotes/:id` para visualização local sem backend OAuth | Antes de iniciar a Fase 3 (autenticação) |
+
+---
+
+*Última atualização: 2026-03-12 — Fase 1 em progresso.*

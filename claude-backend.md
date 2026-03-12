@@ -171,12 +171,12 @@ Category        — id, name, slug
 ## 🚀 10. Plano de Fases
 
 ### Fase 1 — MVP (Core do negócio)
-- [ ] Configurar projeto Spring Boot com Clean Architecture
-- [ ] Entidades: `Quote`, `QuoteFile`, `Customer`
-- [ ] Endpoint `POST /api/v1/quotes` com upload de arquivos
-- [ ] Integração Evolution API (notificação WhatsApp)
-- [ ] Painel admin básico: listar e atualizar status de orçamentos
-- [ ] **Testes obrigatórios para todos os use cases**
+- [x] Configurar projeto Spring Boot com Clean Architecture
+- [x] Entidades: `Quote`, `QuoteFile`, `Customer`
+- [x] Endpoint `POST /api/v1/quotes` com upload de arquivos
+- [x] Integração Evolution API (notificação WhatsApp)
+- [x] Painel admin básico: listar e atualizar status de orçamentos (`GET /api/v1/quotes`, `PATCH /api/v1/quotes/:id/status`)
+- [x] **Testes obrigatórios para todos os use cases**
 
 ### Fase 2 — Portfólio
 - [ ] Entidades: `PortfolioItem`, `Category`
@@ -222,4 +222,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: início do projeto — Fase 1 a iniciar.*
+*Última atualização: 2026-03-12 — Fase 1 concluída.*
