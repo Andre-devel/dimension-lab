@@ -179,15 +179,20 @@ Category        — id, name, slug
 - [x] **Testes obrigatórios para todos os use cases**
 
 ### Fase 2 — Portfólio
-- [ ] Entidades: `PortfolioItem`, `Category`
-- [ ] CRUD de portfólio no painel admin
-- [ ] Galeria pública com filtros por categoria/material
-- [ ] Viewer 3D interativo (Three.js / `<model-viewer>`)
+- [x] Entidades: `PortfolioItem`, `Category`
+- [x] `GET /api/v1/portfolio-items` — galeria pública (apenas visíveis)
+- [x] `GET /api/v1/portfolio-items/{id}` — detalhe público
+- [x] `POST /api/v1/portfolio-items` — criar item (ADMIN)
+- [x] `PUT /api/v1/portfolio-items/{id}` — atualizar item (ADMIN)
+- [x] `DELETE /api/v1/portfolio-items/{id}` — deletar item (ADMIN)
+- [x] `PATCH /api/v1/portfolio-items/{id}/visibility` — toggle visibilidade (ADMIN)
 
 ### Fase 3 — Área do Cliente
-- [ ] OAuth2 Google no backend
-- [ ] Login social no React
-- [ ] Histórico de orçamentos por cliente
+- [x] OAuth2 Google no backend (`OAuth2SuccessHandler`, `JwtService`, `JwtAuthFilter`)
+- [x] `GET /api/v1/auth/me` e `POST /api/v1/auth/logout`
+- [x] `GET /api/v1/quotes/my` — histórico do cliente autenticado (`ListMyQuotesUseCase`)
+- [x] `SecurityConfig` — endpoints admin protegidos com `ROLE_ADMIN`, `/my` com `ROLE_CLIENT`
+- [ ] Login social no React (frontend — próxima etapa)
 - [ ] Acompanhamento de status com notificação por e-mail
 
 ### Fase 4 — Produção
@@ -222,4 +227,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-12 — Fase 1 concluída.*
+*Última atualização: 2026-03-12 — Fase 2 backend concluída (CRUD portfólio). Fase 3 backend concluída.*
