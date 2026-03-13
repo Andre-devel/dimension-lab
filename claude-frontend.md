@@ -289,21 +289,26 @@ interface ApiError {
 - [ ] Integração com `POST /api/v1/quotes`
 
 ### Fase 2 — Portfólio
-- [ ] Página de galeria (`/portfolio`) com filtros
-- [ ] Página de detalhe (`/portfolio/:id`) com viewer 3D
-- [ ] Integração com `GET /api/v1/portfolio-items`
+- [x] Página de galeria (`/portfolio`) com filtros por material
+- [x] Página de detalhe (`/portfolio/:id`) com viewer 3D (`<model-viewer>`)
+- [x] Integração com `GET /api/v1/portfolio-items` e `GET /api/v1/portfolio-items/{id}`
+- [x] `PortfolioCard` component, `portfolioService`, testes para card/página/serviço
 
 ### Fase 3 — Autenticação e Área do Cliente
-- [ ] Fluxo de login social (Google)
-- [ ] Route guards por role
-- [ ] Página `My Quotes` (`/my-quotes`) com histórico e status
-- [ ] Notificação visual de mudança de status
+- [x] Fluxo de login social (Google) — botão "Entrar" na Navbar chama `loginWithGoogle()`
+- [x] `useAuth` hook — rehydrata authStore via `GET /api/v1/auth/me` no mount
+- [x] `authStore` — `isAuthLoading` para evitar redirect prematuro no PrivateRoute
+- [x] Route guards por role — `PrivateRoute` restaurado para `/admin` e `/my-quotes`
+- [x] Página `My Quotes` (`/my-quotes`) com histórico e status badges
+- [x] Navbar condicional — Entrar/Sair + links por role (CLIENT → Meus Orçamentos, ADMIN → Admin)
+- [x] Notificação visual de mudança de status — badge "Atualizado" via localStorage (utils/quoteNotifications + useQuoteNotifications)
 
 ### Fase 4 — Painel Admin
-- [ ] Sidebar de navegação
-- [ ] Listagem de orçamentos com filtros por status
-- [ ] Painel de detalhe do orçamento (resposta + atualização de status)
-- [ ] CRUD do portfólio (upload de fotos e STL)
+- [x] Listagem de orçamentos com filtros por status (Dashboard)
+- [x] Painel de detalhe do orçamento com atualização de status (QuoteDetail)
+- [x] CRUD do portfólio via UI admin (`/admin/portfolio`, `/admin/portfolio/new`, `/admin/portfolio/:id/edit`)
+- [x] Toggle de visibilidade e exclusão de itens do portfólio
+- [ ] Upload real de arquivos (fotos/STL) — atualmente via URL; infraestrutura de storage pendente
 
 ### Fase 5 — Qualidade e Deploy
 - [ ] Cobertura de testes ≥ 80%
@@ -333,8 +338,8 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 | # | Arquivo | Descrição | Quando restaurar |
 |---|---|---|---|
-| 1 | `src/router/index.tsx` | `PrivateRoute role="ADMIN"` removido das rotas `/admin` e `/admin/quotes/:id` para visualização local sem backend OAuth | Antes de iniciar a Fase 3 (autenticação) |
+| ~~1~~ | ~~`src/router/index.tsx`~~ | ~~`PrivateRoute role="ADMIN"` removido~~ | ✅ Restaurado na Fase 3 |
 
 ---
 
-*Última atualização: 2026-03-12 — Fase 1 em progresso.*
+*Última atualização: 2026-03-13 — Fases 2, 3 e 4 concluídas (upload de arquivo pendente).*
