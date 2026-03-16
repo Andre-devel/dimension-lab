@@ -182,17 +182,29 @@ Category        — id, name, slug
 - [x] Entidades: `PortfolioItem`, `Category`
 - [x] `GET /api/v1/portfolio-items` — galeria pública (apenas visíveis)
 - [x] `GET /api/v1/portfolio-items/{id}` — detalhe público
-- [x] `POST /api/v1/portfolio-items` — criar item (ADMIN)
-- [x] `PUT /api/v1/portfolio-items/{id}` — atualizar item (ADMIN)
+- [x] `GET /api/v1/portfolio-items/all` — listagem completa incluindo ocultos (ADMIN)
+- [x] `POST /api/v1/portfolio-items` — criar item com upload de arquivos via multipart (ADMIN)
+- [x] `PUT /api/v1/portfolio-items/{id}` — atualizar item com upload de arquivos via multipart (ADMIN)
 - [x] `DELETE /api/v1/portfolio-items/{id}` — deletar item (ADMIN)
 - [x] `PATCH /api/v1/portfolio-items/{id}/visibility` — toggle visibilidade (ADMIN)
+- [x] `LocalFileStorageAdapter` — retorna paths `/uploads/{filename}` (URL relativa, não caminho absoluto)
+- [x] `WebMvcConfig` — serve `/uploads/**` do filesystem via HTTP
+- [x] `SecurityConfig` — `/uploads/**` permitAll()
 
 ### Fase 3 — Área do Cliente
 - [x] OAuth2 Google no backend (`OAuth2SuccessHandler`, `JwtService`, `JwtAuthFilter`)
 - [x] `GET /api/v1/auth/me` e `POST /api/v1/auth/logout`
 - [x] `GET /api/v1/quotes/my` — histórico do cliente autenticado (`ListMyQuotesUseCase`)
 - [x] `SecurityConfig` — endpoints admin protegidos com `ROLE_ADMIN`, `/my` com `ROLE_CLIENT`
-- [ ] Login social no React (frontend — próxima etapa)
+- [x] `Customer` convertido para Java **record** — accessors: `.id()`, `.name()`, `.email()`, `.whatsapp()`, `.oauthProvider()`, `.oauthId()`
+- [x] `V004` migration — `quotes.customer_id` nullable + FK `REFERENCES customers(id) ON DELETE SET NULL`
+- [x] `JwtService.generateToken()` aceita 4 args (`subject`, `name`, `email`, `role`); adicionado `extractName()`
+- [x] `GET /api/v1/auth/me` — carrega `name` e `whatsapp` do banco via `CustomerRepository.findById()`
+- [x] `CustomerRepository` — adicionado `findById(UUID id)`
+- [x] `POST /api/v1/quotes` — suporta cliente autenticado via `authenticatedCustomerId` em `CreateQuoteRequest`; vincula orçamento ao `Customer` real no banco
+- [x] WhatsApp obrigatório para todos os orçamentos (autenticado ou anônimo)
+- [x] Ao submeter orçamento com autenticado sem WhatsApp no perfil: WhatsApp é salvo em `customers` automaticamente
+- [ ] Login social no React (frontend — concluído na Fase 3 frontend)
 - [ ] Acompanhamento de status com notificação por e-mail
 
 ### Fase 4 — Produção
@@ -227,4 +239,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-12 — Fase 2 backend concluída (CRUD portfólio). Fase 3 backend concluída.*
+*Última atualização: 2026-03-16 — Fase 3 backend completa: Customer como record, V004 FK nullable, JWT com name, /me carrega do DB, orçamento vincula cliente autenticado, WhatsApp obrigatório e persistido no perfil na primeira submissão.*

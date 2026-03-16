@@ -95,6 +95,9 @@ frontend/
 | `/my-quotes` | Histórico do cliente | Logado (cliente) |
 | `/admin` | Dashboard admin | Logado (admin) |
 | `/admin/quotes/:id` | Detalhe do orçamento | Logado (admin) |
+| `/admin/portfolio` | Lista de itens do portfólio | Logado (admin) |
+| `/admin/portfolio/new` | Criar item do portfólio | Logado (admin) |
+| `/admin/portfolio/:id/edit` | Editar item do portfólio | Logado (admin) |
 
 ---
 
@@ -302,13 +305,19 @@ interface ApiError {
 - [x] Página `My Quotes` (`/my-quotes`) com histórico e status badges
 - [x] Navbar condicional — Entrar/Sair + links por role (CLIENT → Meus Orçamentos, ADMIN → Admin)
 - [x] Notificação visual de mudança de status — badge "Atualizado" via localStorage (utils/quoteNotifications + useQuoteNotifications)
+- [x] `User` type (`types/user.ts`) — adicionado campo `whatsapp?: string`
+- [x] `QuoteRequest` ciente do estado de autenticação:
+  - Autenticado: exibe card com nome/email/(whatsapp se já salvo); pede WhatsApp apenas se perfil não tiver
+  - Anônimo: exibe campos nome, email e WhatsApp (WhatsApp obrigatório por validação customizada)
+- [x] `authStore.setUser()` chamado imediatamente após submit bem-sucedido com WhatsApp novo — evita re-exibição do campo sem reload de página
 
 ### Fase 4 — Painel Admin
 - [x] Listagem de orçamentos com filtros por status (Dashboard)
 - [x] Painel de detalhe do orçamento com atualização de status (QuoteDetail)
 - [x] CRUD do portfólio via UI admin (`/admin/portfolio`, `/admin/portfolio/new`, `/admin/portfolio/:id/edit`)
 - [x] Toggle de visibilidade e exclusão de itens do portfólio
-- [ ] Upload real de arquivos (fotos/STL) — atualmente via URL; infraestrutura de storage pendente
+- [x] Upload real de arquivos (fotos/STL) via `FormData` multipart — backend serve `/uploads/**` via HTTP
+- [x] `fileUrl()` utility — prefixa paths `/uploads/*` com `VITE_API_BASE_URL` para uso em `<img src>`
 
 ### Fase 5 — Qualidade e Deploy
 - [ ] Cobertura de testes ≥ 80%
@@ -342,4 +351,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-13 — Fases 2, 3 e 4 concluídas (upload de arquivo pendente).*
+*Última atualização: 2026-03-16 — User type com whatsapp, QuoteRequest auth-aware (card de usuário, WhatsApp obrigatório, campo condicional), authStore.setUser() após submit para atualização imediata.*
