@@ -16,7 +16,7 @@
 | Campo | Descrição |
 |---|---|
 | **Problema** | Clientes de impressão 3D não têm canal digital para solicitar orçamentos nem visualizar trabalhos anteriores |
-| **Usuários** | Visitantes anônimos, clientes com login social, administrador (dono da impressora) |
+| **Usuários** | Visitantes anônimos, clientes com login (Google OAuth2 ou email/senha), administrador (dono da impressora) |
 | **Casos de uso críticos** | Envio de orçamento, notificação WhatsApp, exibição do portfólio |
 | **Limitações** | Deploy local (localhost) no início; sem gateway de pagamento no MVP |
 
@@ -89,7 +89,7 @@ frontend/
 ## 🗂 4. Entidades do Domínio
 
 ```
-Customer        — id, name, email, whatsapp, oauthProvider, oauthId
+Customer        — id, name, email, whatsapp, oauthProvider, oauthId, passwordHash
 Quote           — id, customer, description, files[], material, color, quantity, finish, desiredDeadline, status, createdAt
 QuoteStatus     — RECEIVED | UNDER_REVIEW | APPROVED | PRINTING | READY | DELIVERED
 QuoteFile       — id, quote, filePath, fileType (IMAGE | VIDEO | MODEL_3D)
@@ -193,6 +193,10 @@ Category        — id, name, slug
 
 ### Fase 3 — Área do Cliente
 - [x] OAuth2 Google no backend (`OAuth2SuccessHandler`, `JwtService`, `JwtAuthFilter`)
+- [x] Autenticação email/senha — `POST /api/v1/auth/register` e `POST /api/v1/auth/login`
+  - `V008` migration: `oauth_provider`/`oauth_id` anuláveis, coluna `password_hash` adicionada
+  - `BCryptPasswordEncoder` bean em `SecurityConfig`; hash salvo no registro, verificado no login
+  - Cookie `auth_token` HttpOnly emitido nos dois fluxos (Google e email/senha)
 - [x] `GET /api/v1/auth/me` e `POST /api/v1/auth/logout`
 - [x] `GET /api/v1/quotes/my` — histórico do cliente autenticado (`ListMyQuotesUseCase`)
 - [x] `SecurityConfig` — endpoints admin protegidos com `ROLE_ADMIN`, `/my` com `ROLE_CLIENT`
@@ -204,15 +208,39 @@ Category        — id, name, slug
 - [x] `POST /api/v1/quotes` — suporta cliente autenticado via `authenticatedCustomerId` em `CreateQuoteRequest`; vincula orçamento ao `Customer` real no banco
 - [x] WhatsApp obrigatório para todos os orçamentos (autenticado ou anônimo)
 - [x] Ao submeter orçamento com autenticado sem WhatsApp no perfil: WhatsApp é salvo em `customers` automaticamente
-- [ ] Login social no React (frontend — concluído na Fase 3 frontend)
-- [ ] Acompanhamento de status com notificação por e-mail
+- [x] Login social no React (frontend — concluído na Fase 3 frontend)
+- [ ] Acompanhamento de status com notificação por e-mail (não implementado)
+
+### Fase 3.5 — Catálogo e Configurações (pendente)
+- [x] `GET /api/v1/materials` — listar ativos (público)
+- [x] `GET /api/v1/materials/all` — listar todos incluindo inativos (ADMIN)
+- [x] `POST /api/v1/materials` — criar material (ADMIN)
+- [x] `PATCH /api/v1/materials/{id}/toggle` — ativar/desativar (ADMIN)
+- [ ] `PUT /api/v1/materials/{id}` — editar nome do material (ADMIN)
+- [ ] `DELETE /api/v1/materials/{id}` — remover material (ADMIN); validar se não há quotes vinculadas
+- [x] `GET /api/v1/colors` — listar ativos (público)
+- [x] `GET /api/v1/colors/all` — listar todos incluindo inativos (ADMIN)
+- [x] `POST /api/v1/colors` — criar cor com hex (ADMIN)
+- [x] `PATCH /api/v1/colors/{id}/toggle` — ativar/desativar (ADMIN)
+- [ ] `PUT /api/v1/colors/{id}` — editar nome e hex da cor (ADMIN)
+- [ ] `DELETE /api/v1/colors/{id}` — remover cor (ADMIN); validar se não há quotes vinculadas
+- [ ] **Configurações do site** — tabela `site_settings` (key/value) para links gerenciáveis sem redeploy:
+  - Entidade: `SiteSetting(key, value)` — chave única
+  - `GET /api/v1/settings` — retorna todas as configurações públicas (whatsapp_url, instagram_url, youtube_url)
+  - `PUT /api/v1/settings/{key}` — atualiza valor (ADMIN)
+  - Seeds iniciais via migration: `whatsapp_url`, `instagram_url`, `youtube_url`
+  - Frontend consome `GET /api/v1/settings` para exibir links dinâmicos no Footer e em outros lugares
 
 ### Fase 4 — Produção
-- [ ] Docker Compose (backend + PostgreSQL + Evolution API)
+- [ ] `Dockerfile` do backend (Java 25 + Gradle)
+- [ ] `docker-compose.yml` — orquestra backend + PostgreSQL + volume de uploads (Evolution API opcional)
+- [ ] `application-prod.yml` — remover defaults inseguros de `DB_PASSWORD` e `JWT_SECRET`; `STORAGE_PATH` deve apontar para volume persistente fora do working dir
+- [ ] Rate limiting nos endpoints `/auth/register` e `/auth/login` (proteção contra brute force)
+- [ ] Paginação em `GET /api/v1/quotes` (admin) — sem paginação a query cresce sem limite
+- [ ] Versão `0.0.1-SNAPSHOT` → `0.1.0` no `build.gradle`
 - [ ] CI/CD básico (GitHub Actions: lint + test + build)
-- [ ] Deploy em VPS ou Raspberry Pi
-- [ ] Variáveis de ambiente seguras (.env fora do repo)
-- [ ] Monitoramento básico (Actuator + logs estruturados)
+- [ ] Deploy em VPS
+- [ ] Monitoramento: Actuator já expõe `/health` e `/info`; métricas (Prometheus/Grafana) são opcionais
 
 ---
 

@@ -17,7 +17,7 @@
 |---|---|
 | **Projeto** | Dimension.Lab3D — site de orçamentos e portfólio para impressão 3D |
 | **Repositório** | Separado do backend (multi-repo) |
-| **Usuários** | Visitante anônimo, cliente logado (Google), admin |
+| **Usuários** | Visitante anônimo, cliente logado (Google ou email/senha), admin |
 | **Casos de uso críticos** | Envio de orçamento com anexos, visualização do portfólio, painel admin |
 
 ---
@@ -256,6 +256,7 @@ interface ApiError {
 - **Nunca instalar biblioteca sem registrar aqui o motivo**
 - **Sempre rodar testes após mudanças**
 - **Se errar: não corrigir manualmente — explicar o erro, atualizar este Cloud.md e pedir reexecução**
+- **Toda nova página pública deve incluir `<SEOHead>` com `title`, `description`, `canonical` e `jsonLd` adequado — sem exceção**
 
 ---
 
@@ -277,6 +278,7 @@ interface ApiError {
 | msw | 2 | Mock de API |
 | @google/model-viewer | latest | Viewer 3D (STL/GLB) |
 | lucide-react | latest | Ícones |
+| react-helmet-async | 3 | Meta tags dinâmicas por página (SEO) |
 
 > Qualquer nova biblioteca deve ser adicionada aqui com justificativa antes de instalar.
 
@@ -298,7 +300,11 @@ interface ApiError {
 - [x] `PortfolioCard` component, `portfolioService`, testes para card/página/serviço
 
 ### Fase 3 — Autenticação e Área do Cliente
-- [x] Fluxo de login social (Google) — botão "Entrar" na Navbar chama `loginWithGoogle()`
+- [x] Fluxo de login social (Google) — OAuth2 redirect via `/oauth2/authorization/google`
+- [x] Autenticação email/senha — páginas `/login` e `/register`, `POST /api/v1/auth/login` e `/register`
+  - Navbar "Entrar" navega para `/login` (opções: email/senha ou Google)
+  - Login seta cookie HttpOnly `auth_token` e popula `authStore` via `setUser()`
+  - Redirect pós-login: ADMIN → `/admin`, CLIENT → `/my-quotes`
 - [x] `useAuth` hook — rehydrata authStore via `GET /api/v1/auth/me` no mount
 - [x] `authStore` — `isAuthLoading` para evitar redirect prematuro no PrivateRoute
 - [x] Route guards por role — `PrivateRoute` restaurado para `/admin` e `/my-quotes`
@@ -318,12 +324,28 @@ interface ApiError {
 - [x] Toggle de visibilidade e exclusão de itens do portfólio
 - [x] Upload real de arquivos (fotos/STL) via `FormData` multipart — backend serve `/uploads/**` via HTTP
 - [x] `fileUrl()` utility — prefixa paths `/uploads/*` com `VITE_API_BASE_URL` para uso em `<img src>`
+- [x] Catálogo de materiais (`/admin/materials`) — criar + toggle ativo/inativo
+- [x] Catálogo de cores (`/admin/colors`) — criar com hex + toggle ativo/inativo
+- [ ] **Editar e remover materiais** — `MaterialsAdmin` só tem criar/toggle; falta botão de editar nome e botão de excluir
+- [ ] **Editar e remover cores** — `ColorsAdmin` só tem criar/toggle; falta botão de editar nome/hex e botão de excluir
+- [ ] **Página de configurações do site** (`/admin/settings`) — somente ADMIN — gerenciar links das redes sociais exibidos no footer/site:
+  - WhatsApp URL
+  - Instagram URL
+  - YouTube URL
+  - (extensível para outros links futuros)
+  - Decisão de implementação: os links podem ser salvos no banco (tabela `site_settings` key/value) ou em variável de ambiente; preferir banco para permitir edição sem redeploy
 
 ### Fase 5 — Qualidade e Deploy
-- [ ] Cobertura de testes ≥ 80%
-- [ ] Lighthouse score ≥ 90 (performance, acessibilidade)
-- [ ] Build de produção via Docker
-- [ ] Variáveis de ambiente separadas por ambiente
+- [ ] `Dockerfile` do frontend (Node build stage + nginx para servir `/dist`)
+- [ ] `.env.production` — `VITE_API_BASE_URL` deve apontar para a URL real da API (não localhost)
+- [ ] Corrigir typo no `.env`: `VITE_YOUTUBE_URL=https://youtube.com/@dimen sionlab3d` tem espaço
+- [ ] Substituir `alert()` em `MyQuotes/index.tsx` por toast ou mensagem inline
+- [ ] Sitemap dinâmico — incluir `/portfolio/:id` das peças reais (requer endpoint backend ou script)
+- [ ] Lighthouse score ≥ 90 (performance, acessibilidade) — não validado ainda
+- [ ] Remover arquivos de rascunho da raiz do repositório: `form.html`, `cubo-animation.txt`, `index.html`, `img.png`, `logo.jpeg`, `uploads/`
+- [ ] CI/CD (GitHub Actions): lint + test + build automático a cada PR
+- [ ] Tratamento de erro global (boundary ou interceptor que exibe tela de erro amigável em falhas inesperadas de API)
+- [ ] `.env.example` para facilitar onboarding
 
 ---
 
@@ -351,4 +373,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-16 — User type com whatsapp, QuoteRequest auth-aware (card de usuário, WhatsApp obrigatório, campo condicional), authStore.setUser() após submit para atualização imediata.*
+*Última atualização: 2026-03-19 — Autenticação email/senha implementada (Login, Register, authService). og-image.png adicionada. Favicon SVG criado. Fase 4 revisada: editar/remover materiais e cores pendente. Página de configurações do site (redes sociais) planejada.*
