@@ -89,7 +89,7 @@ frontend/
 ## 🗂 4. Entidades do Domínio
 
 ```
-Customer        — id, name, email, whatsapp, oauthProvider, oauthId, passwordHash
+Customer        — id, name, email, phone, oauthProvider, oauthId, passwordHash
 Quote           — id, customer, description, files[], material, color, quantity, finish, desiredDeadline, status, createdAt
 QuoteStatus     — RECEIVED | UNDER_REVIEW | APPROVED | PRINTING | READY | DELIVERED
 QuoteFile       — id, quote, filePath, fileType (IMAGE | VIDEO | MODEL_3D)
@@ -107,9 +107,13 @@ Category        — id, name, slug
 | E-mail (futuro) | SMTP / Resend | Mudança de status do pedido |
 
 **Integração Evolution API:**
-- Webhook ou chamada direta via HTTP ao criar `Quote`
+- Chamada direta via HTTP ao criar `Quote`
 - Implementado como `NotificationPort` na camada de domínio
 - Injetado via `EvolutionWhatsAppAdapter` na infra
+- Envio assíncrono com `@Async` + virtual threads (`spring.threads.virtual.enabled: true`)
+- Body da API: `{ "number": "...", "textMessage": { "text": "..." } }`
+- Variáveis: `EVOLUTION_ENABLED`, `EVOLUTION_BASE_URL`, `EVOLUTION_INSTANCE`, `EVOLUTION_API_KEY`, `EVOLUTION_ADMIN_NUMBER`
+- **Atenção:** número remetente (conectado na Evolution) deve ser diferente do `EVOLUTION_ADMIN_NUMBER` para gerar notificação push
 
 ---
 
@@ -200,42 +204,47 @@ Category        — id, name, slug
 - [x] `GET /api/v1/auth/me` e `POST /api/v1/auth/logout`
 - [x] `GET /api/v1/quotes/my` — histórico do cliente autenticado (`ListMyQuotesUseCase`)
 - [x] `SecurityConfig` — endpoints admin protegidos com `ROLE_ADMIN`, `/my` com `ROLE_CLIENT`
-- [x] `Customer` convertido para Java **record** — accessors: `.id()`, `.name()`, `.email()`, `.whatsapp()`, `.oauthProvider()`, `.oauthId()`
+- [x] `Customer` convertido para Java **record** — accessors: `.id()`, `.name()`, `.email()`, `.phone()`, `.oauthProvider()`, `.oauthId()`
 - [x] `V004` migration — `quotes.customer_id` nullable + FK `REFERENCES customers(id) ON DELETE SET NULL`
 - [x] `JwtService.generateToken()` aceita 4 args (`subject`, `name`, `email`, `role`); adicionado `extractName()`
-- [x] `GET /api/v1/auth/me` — carrega `name` e `whatsapp` do banco via `CustomerRepository.findById()`
+- [x] `GET /api/v1/auth/me` — carrega `name` e `phone` do banco via `CustomerRepository.findById()`
 - [x] `CustomerRepository` — adicionado `findById(UUID id)`
 - [x] `POST /api/v1/quotes` — suporta cliente autenticado via `authenticatedCustomerId` em `CreateQuoteRequest`; vincula orçamento ao `Customer` real no banco
-- [x] WhatsApp obrigatório para todos os orçamentos (autenticado ou anônimo)
-- [x] Ao submeter orçamento com autenticado sem WhatsApp no perfil: WhatsApp é salvo em `customers` automaticamente
+- [x] Telefone obrigatório para todos os orçamentos (autenticado ou anônimo)
+- [x] Ao submeter orçamento com autenticado sem telefone no perfil: telefone é salvo em `customers` automaticamente
 - [x] Login social no React (frontend — concluído na Fase 3 frontend)
 - [ ] Acompanhamento de status com notificação por e-mail (não implementado)
 
-### Fase 3.5 — Catálogo e Configurações (pendente)
+### Fase 3.5 — Catálogo, Configurações e Perfil (concluída)
 - [x] `GET /api/v1/materials` — listar ativos (público)
 - [x] `GET /api/v1/materials/all` — listar todos incluindo inativos (ADMIN)
 - [x] `POST /api/v1/materials` — criar material (ADMIN)
 - [x] `PATCH /api/v1/materials/{id}/toggle` — ativar/desativar (ADMIN)
-- [ ] `PUT /api/v1/materials/{id}` — editar nome do material (ADMIN)
-- [ ] `DELETE /api/v1/materials/{id}` — remover material (ADMIN); validar se não há quotes vinculadas
+- [x] `PUT /api/v1/materials/{id}` — editar nome do material (ADMIN)
+- [x] `DELETE /api/v1/materials/{id}` — remover material (ADMIN); valida quotes vinculadas (409)
 - [x] `GET /api/v1/colors` — listar ativos (público)
 - [x] `GET /api/v1/colors/all` — listar todos incluindo inativos (ADMIN)
 - [x] `POST /api/v1/colors` — criar cor com hex (ADMIN)
 - [x] `PATCH /api/v1/colors/{id}/toggle` — ativar/desativar (ADMIN)
-- [ ] `PUT /api/v1/colors/{id}` — editar nome e hex da cor (ADMIN)
-- [ ] `DELETE /api/v1/colors/{id}` — remover cor (ADMIN); validar se não há quotes vinculadas
-- [ ] **Configurações do site** — tabela `site_settings` (key/value) para links gerenciáveis sem redeploy:
-  - Entidade: `SiteSetting(key, value)` — chave única
+- [x] `PUT /api/v1/colors/{id}` — editar nome e hex da cor (ADMIN)
+- [x] `DELETE /api/v1/colors/{id}` — remover cor (ADMIN); valida quotes vinculadas (409)
+- [x] **Configurações do site** — tabela `site_settings` (key/value) — V009 migration com seeds
   - `GET /api/v1/settings` — retorna todas as configurações públicas (whatsapp_url, instagram_url, youtube_url)
   - `PUT /api/v1/settings/{key}` — atualiza valor (ADMIN)
-  - Seeds iniciais via migration: `whatsapp_url`, `instagram_url`, `youtube_url`
-  - Frontend consome `GET /api/v1/settings` para exibir links dinâmicos no Footer e em outros lugares
+- [x] `PATCH /api/v1/auth/profile` — atualiza `name` e `phone` do cliente autenticado
+- [x] `GET /api/v1/auth/check-email?email=` — verifica se e-mail pertence a conta registrada (público)
+- [x] `GET /api/v1/auth/check-phone?phone=` — verifica se telefone pertence a conta registrada (público)
+- [x] `CustomerRepository.findByPhone(String)` — busca por número de telefone
+- [x] `V010` migration — renomeia `whatsapp` → `phone` em `customers` e `customer_whatsapp` → `customer_phone` em `quotes`
+- [x] `CreateQuoteUseCase` — bloqueia orçamento anônimo se e-mail ou telefone pertencer a conta registrada (409)
 
 ### Fase 4 — Produção
 - [ ] `Dockerfile` do backend (Java 25 + Gradle)
 - [ ] `docker-compose.yml` — orquestra backend + PostgreSQL + volume de uploads (Evolution API opcional)
 - [ ] `application-prod.yml` — remover defaults inseguros de `DB_PASSWORD` e `JWT_SECRET`; `STORAGE_PATH` deve apontar para volume persistente fora do working dir
-- [ ] Rate limiting nos endpoints `/auth/register` e `/auth/login` (proteção contra brute force)
+- [x] Rate limiting — `RateLimitFilter` (Bucket4j 8.10.1) em `POST /auth/register` (5/15min), `POST /auth/login` (10/15min), `POST /quotes` (5/15min); por IP com suporte a `X-Forwarded-For`; retorna `429` com JSON `ApiError`
+- [x] `cookie.setSecure(cookieSecure)` — controlado via `COOKIE_SECURE` env var (default `false`); aplicado em `AuthController` e `OAuth2SuccessHandler`; setar `true` em produção (HTTPS)
+- [x] `GET /sitemap.xml` — `SitemapController` retorna XML com páginas estáticas + portfolio items visíveis; usa `FRONTEND_URL`; público no `SecurityConfig`
 - [ ] Paginação em `GET /api/v1/quotes` (admin) — sem paginação a query cresce sem limite
 - [ ] Versão `0.0.1-SNAPSHOT` → `0.1.0` no `build.gradle`
 - [ ] CI/CD básico (GitHub Actions: lint + test + build)
@@ -267,4 +276,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-16 — Fase 3 backend completa: Customer como record, V004 FK nullable, JWT com name, /me carrega do DB, orçamento vincula cliente autenticado, WhatsApp obrigatório e persistido no perfil na primeira submissão.*
+*Última atualização: 2026-03-24 — Fase 4 em andamento: rate limiting (Bucket4j), cookie.secure configurável por env, sitemap dinâmico.*

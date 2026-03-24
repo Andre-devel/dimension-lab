@@ -311,13 +311,13 @@ interface ApiError {
 - [x] Página `My Quotes` (`/my-quotes`) com histórico e status badges
 - [x] Navbar condicional — Entrar/Sair + links por role (CLIENT → Meus Orçamentos, ADMIN → Admin)
 - [x] Notificação visual de mudança de status — badge "Atualizado" via localStorage (utils/quoteNotifications + useQuoteNotifications)
-- [x] `User` type (`types/user.ts`) — adicionado campo `whatsapp?: string`
+- [x] `User` type (`types/user.ts`) — adicionado campo `phone?: string`
 - [x] `QuoteRequest` ciente do estado de autenticação:
-  - Autenticado: exibe card com nome/email/(whatsapp se já salvo); pede WhatsApp apenas se perfil não tiver
-  - Anônimo: exibe campos nome, email e WhatsApp (WhatsApp obrigatório por validação customizada)
-- [x] `authStore.setUser()` chamado imediatamente após submit bem-sucedido com WhatsApp novo — evita re-exibição do campo sem reload de página
+  - Autenticado: exibe card com nome/email/(telefone se já salvo); pede telefone apenas se perfil não tiver
+  - Anônimo: exibe campos nome, e-mail e telefone (telefone obrigatório por validação customizada)
+- [x] `authStore.setUser()` chamado imediatamente após submit bem-sucedido com telefone novo — evita re-exibição do campo sem reload de página
 
-### Fase 4 — Painel Admin
+### Fase 4 — Painel Admin (concluída)
 - [x] Listagem de orçamentos com filtros por status (Dashboard)
 - [x] Painel de detalhe do orçamento com atualização de status (QuoteDetail)
 - [x] CRUD do portfólio via UI admin (`/admin/portfolio`, `/admin/portfolio/new`, `/admin/portfolio/:id/edit`)
@@ -326,21 +326,34 @@ interface ApiError {
 - [x] `fileUrl()` utility — prefixa paths `/uploads/*` com `VITE_API_BASE_URL` para uso em `<img src>`
 - [x] Catálogo de materiais (`/admin/materials`) — criar + toggle ativo/inativo
 - [x] Catálogo de cores (`/admin/colors`) — criar com hex + toggle ativo/inativo
-- [ ] **Editar e remover materiais** — `MaterialsAdmin` só tem criar/toggle; falta botão de editar nome e botão de excluir
-- [ ] **Editar e remover cores** — `ColorsAdmin` só tem criar/toggle; falta botão de editar nome/hex e botão de excluir
-- [ ] **Página de configurações do site** (`/admin/settings`) — somente ADMIN — gerenciar links das redes sociais exibidos no footer/site:
-  - WhatsApp URL
-  - Instagram URL
-  - YouTube URL
-  - (extensível para outros links futuros)
-  - Decisão de implementação: os links podem ser salvos no banco (tabela `site_settings` key/value) ou em variável de ambiente; preferir banco para permitir edição sem redeploy
+- [x] Editar e remover materiais — `MaterialsAdmin` com edição inline e exclusão (409 → mensagem de erro)
+- [x] Editar e remover cores — `ColorsAdmin` com edição inline (nome + hex picker) e exclusão (409 → mensagem de erro)
+- [x] Página de configurações do site (`/admin/settings`) — gerencia whatsapp_url, instagram_url, youtube_url via `GET/PUT /api/v1/settings`
+
+### Fase 4.5 — Perfil de Usuário e Segurança (concluída)
+- [x] Página `/profile` — editar nome e telefone; e-mail somente leitura; `PATCH /api/v1/auth/profile`
+- [x] Navbar com link "Perfil" para todos os autenticados; "Admin" para ADMIN; "Meus Orçamentos" para CLIENT
+- [x] `authService.updateProfile(name, phone)` — atualiza `authStore` imediatamente após sucesso
+- [x] `authService.checkEmail(email)` e `authService.checkPhone(phone)` — endpoints de verificação
+- [x] `QuoteRequest`: backend bloqueia (409) orçamento anônimo com e-mail ou telefone de conta registrada
+- [x] `QInput` com `forwardRef` — corrige leitura de valores pelo React Hook Form em componentes customizados
+- [x] Campo quantidade usando `Controller` — resolve bug de `NaN` com `type="number"`
+- [x] Setas de spin removidas do campo numérico (CSS `appearance: textfield`)
+- [x] Refactor `whatsapp` → `phone` em todo o codebase (campo `User.phone`, `Customer.phone`, `CreateQuotePayload.customerPhone`, migration V010)
 
 ### Fase 5 — Qualidade e Deploy
 - [ ] `Dockerfile` do frontend (Node build stage + nginx para servir `/dist`)
 - [ ] `.env.production` — `VITE_API_BASE_URL` deve apontar para a URL real da API (não localhost)
 - [ ] Corrigir typo no `.env`: `VITE_YOUTUBE_URL=https://youtube.com/@dimen sionlab3d` tem espaço
-- [ ] Substituir `alert()` em `MyQuotes/index.tsx` por toast ou mensagem inline
-- [ ] Sitemap dinâmico — incluir `/portfolio/:id` das peças reais (requer endpoint backend ou script)
+- [x] Substituir `alert()` e `window.confirm()` em `MyQuotes/index.tsx` por confirmação inline no card e banner de erro com mensagem do backend
+- [x] Sitemap dinâmico — `GET /sitemap.xml` no backend; `<link rel="sitemap">` no `index.html`
+- [x] `BackButton` aplicado em todas as páginas (QuoteDetail, PortfolioDetail, MyQuotes, Profile, QuoteRequest, NewPortfolioItem, EditPortfolioItem)
+- [x] `ScrollRestoration` via root layout no `createBrowserRouter` — scroll volta ao topo a cada navegação
+- [x] `scroll-behavior: smooth` global no `index.css`
+- [x] Shake animation (`field-shake`) nos campos inválidos ao tentar submeter o formulário de orçamento
+- [x] Máscara de telefone brasileiro `(XX) XXXXX-XXXX` com validação Zod no formulário de orçamento
+- [x] `whatsapp_admin_number` adicionado à página de configurações do admin
+- [x] Ícones SVG substituem botões de texto (Editar/Desativar/Excluir) em `ColorsAdmin` e `MaterialsAdmin` — fix layout mobile
 - [ ] Lighthouse score ≥ 90 (performance, acessibilidade) — não validado ainda
 - [ ] Remover arquivos de rascunho da raiz do repositório: `form.html`, `cubo-animation.txt`, `index.html`, `img.png`, `logo.jpeg`, `uploads/`
 - [ ] CI/CD (GitHub Actions): lint + test + build automático a cada PR
@@ -373,4 +386,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-19 — Autenticação email/senha implementada (Login, Register, authService). og-image.png adicionada. Favicon SVG criado. Fase 4 revisada: editar/remover materiais e cores pendente. Página de configurações do site (redes sociais) planejada.*
+*Última atualização: 2026-03-24 — Fase 5 em andamento: sitemap, BackButton, ScrollRestoration, shake animation, máscara de telefone, ícones SVG em admin, confirmação inline em MyQuotes, whatsapp_admin_number em SettingsAdmin.*
