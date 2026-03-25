@@ -60,6 +60,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Checkout (com submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GH_TOKEN }}
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
