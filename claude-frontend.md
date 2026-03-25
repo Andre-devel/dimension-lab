@@ -334,8 +334,11 @@ interface ApiError {
 - [x] Refactor `whatsapp` → `phone` em todo o codebase (campo `User.phone`, `Customer.phone`, `CreateQuotePayload.customerPhone`, migration V010)
 
 ### Fase 5 — Qualidade e Deploy
-- [ ] `Dockerfile` do frontend (Node build stage + nginx para servir `/dist`)
-- [ ] `.env.production` — `VITE_API_BASE_URL` deve apontar para a URL real da API (não localhost)
+- [x] `Dockerfile` do frontend — Node build stage + nginx para servir `/dist`; `VITE_API_BASE_URL=""` (nginx proxy transparente via `/api/`)
+- [x] `.env.production` — configurado no VPS via `/opt/dimension-lab/.env`; `VITE_API_BASE_URL` vazio pois Caddy/nginx fazem proxy
+- [x] CI/CD — `ci-frontend.yml` (lint + test + build com Vitest coverage ≥ 80%); `cd.yml` dispara deploy ao VPS após ambos CIs passarem; autenticação de submodules privados via `MY_REPO_PAT`
+- [x] TypeScript build errors resolvidos — `vite.config.ts` importa de `vitest/config`; `@types/node` adicionado; non-null assertions em `Home`; `description?: string` em `PortfolioItem`; `?? ''` em `PortfolioDetail` e `QuoteRequest`
+- [x] Cobertura de testes ≥ 80% — 212 testes passando, 85% de cobertura de funções; novos testes: `Toast`, `CustomSelect`, `Carousel`, `BackButton`, `authService` expandido; `scrollBy` stub no `setup.ts`
 - [ ] Corrigir typo no `.env`: `VITE_YOUTUBE_URL=https://youtube.com/@dimen sionlab3d` tem espaço
 - [x] Substituir `alert()` e `window.confirm()` em `MyQuotes/index.tsx` por confirmação inline no card e banner de erro com mensagem do backend
 - [x] Sitemap dinâmico — `GET /sitemap.xml` no backend; `<link rel="sitemap">` no `index.html`
@@ -348,7 +351,7 @@ interface ApiError {
 - [x] Ícones SVG substituem botões de texto (Editar/Desativar/Excluir) em `ColorsAdmin` e `MaterialsAdmin` — fix layout mobile
 - [ ] Lighthouse score ≥ 90 (performance, acessibilidade) — não validado ainda
 - [ ] Remover arquivos de rascunho da raiz do repositório: `form.html`, `cubo-animation.txt`, `index.html`, `img.png`, `logo.jpeg`, `uploads/`
-- [ ] CI/CD (GitHub Actions): lint + test + build automático a cada PR
+- [x] CI/CD (GitHub Actions): lint + test + build automático — ver acima
 - [x] Tratamento de erro global — `ErrorBoundary` (erros de renderização) + interceptor Axios para 5xx e sem conexão → `useToastStore`; `Toast` renderizado em `App.tsx`
 - [ ] `.env.example` para facilitar onboarding
 
@@ -378,4 +381,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-24 — Fase 5 em andamento: sitemap, BackButton, ScrollRestoration, shake animation, máscara de telefone, ícones SVG em admin, confirmação inline em MyQuotes, whatsapp_admin_number em SettingsAdmin.*
+*Última atualização: 2026-03-25 — Fase 5 em andamento: Dockerfile pronto, CI/CD rodando, deploy no VPS (dimensionlab.tech). TypeScript build corrigido. 212 testes passando, cobertura 85%. Pendente: typo no .env youtube, Lighthouse ≥ 90, remover arquivos rascunho da raiz, .env.example.*

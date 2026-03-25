@@ -240,15 +240,15 @@ Category        — id, name, slug
 
 ### Fase 4 — Produção
 - [x] `Dockerfile` do backend — multi-stage (eclipse-temurin:25-jdk builder + 25-jre runtime); usuário não-root; volume `/app/uploads`; healthcheck em `/actuator/health`
-- [ ] `docker-compose.yml` — orquestra backend + PostgreSQL + volume de uploads (Evolution API opcional)
-- [ ] `application-prod.yml` — remover defaults inseguros de `DB_PASSWORD` e `JWT_SECRET`; `STORAGE_PATH` deve apontar para volume persistente fora do working dir
+- [x] `docker-compose.yml` — orquestra postgres + backend + frontend + volumes persistentes; portas ligadas a `127.0.0.1` (Caddy como proxy); healthcheck do backend via `/dev/tcp` (sem curl/wget na imagem); frontend na `3000:80` (Caddy ocupa a 80); postgres expõe `5432` localmente para acesso via SSH tunnel (DBeaver)
+- [x] `application-prod.yml` — secrets via env vars no `.env` do VPS; `COOKIE_SECURE=true`; `STORAGE_PATH=/app/uploads` mapeado em volume Docker
 - [x] Rate limiting — `RateLimitFilter` (Bucket4j 8.10.1) em `POST /auth/register` (5/15min), `POST /auth/login` (10/15min), `POST /quotes` (5/15min); por IP com suporte a `X-Forwarded-For`; retorna `429` com JSON `ApiError`
 - [x] `cookie.setSecure(cookieSecure)` — controlado via `COOKIE_SECURE` env var (default `false`); aplicado em `AuthController` e `OAuth2SuccessHandler`; setar `true` em produção (HTTPS)
 - [x] `GET /sitemap.xml` — `SitemapController` retorna XML com páginas estáticas + portfolio items visíveis; usa `FRONTEND_URL`; público no `SecurityConfig`
+- [x] CI/CD — GitHub Actions: `ci-backend.yml` (lint + test), `cd.yml` (deploy ao VPS via SSH após ambos CIs passarem); autenticação de submodules privados via secret `MY_REPO_PAT` com `token:` no checkout action
+- [x] Deploy em VPS — site no ar em `dimensionlab.tech` com HTTPS via Caddy (Let's Encrypt automático); Caddy faz proxy `/api/*` → backend:8080 e `/` → frontend:3000; subdomínio `evolution.dimensionlab.tech` → porta 8081
 - [ ] Paginação em `GET /api/v1/quotes` (admin) — sem paginação a query cresce sem limite
 - [ ] Versão `0.0.1-SNAPSHOT` → `0.1.0` no `build.gradle`
-- [ ] CI/CD básico (GitHub Actions: lint + test + build)
-- [ ] Deploy em VPS
 - [ ] Monitoramento: Actuator já expõe `/health` e `/info`; métricas (Prometheus/Grafana) são opcionais
 
 ---
@@ -276,4 +276,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-24 — Fase 4 em andamento: rate limiting (Bucket4j), cookie.secure configurável por env, sitemap dinâmico.*
+*Última atualização: 2026-03-25 — Fase 4 concluída: docker-compose, CI/CD (GitHub Actions + MY_REPO_PAT para submodules privados), deploy no VPS com Caddy (HTTPS automático). Pendente: paginação de quotes admin, bump versão 0.1.0.*
