@@ -24,8 +24,8 @@ jobs:
       - name: Checkout (com submodules)
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.MY_REPO_PAT }}
           submodules: recursive
-          token: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Setup Node 22
         uses: actions/setup-node@v4
