@@ -52,6 +52,8 @@ services:
       EVOLUTION_BASE_URL:     ${EVOLUTION_BASE_URL:-}
       EVOLUTION_INSTANCE:     ${EVOLUTION_INSTANCE:-}
       EVOLUTION_ADMIN_NUMBER: ${EVOLUTION_ADMIN_NUMBER:-}
+
+      SPRING_PROFILES_ACTIVE: prod
     volumes:
       - uploads_data:/app/uploads
     healthcheck:
