@@ -239,7 +239,7 @@ Category        — id, name, slug
 - [x] `CreateQuoteUseCase` — bloqueia orçamento anônimo se e-mail ou telefone pertencer a conta registrada (409)
 
 ### Fase 4 — Produção
-- [ ] `Dockerfile` do backend (Java 25 + Gradle)
+- [x] `Dockerfile` do backend — multi-stage (eclipse-temurin:25-jdk builder + 25-jre runtime); usuário não-root; volume `/app/uploads`; healthcheck em `/actuator/health`
 - [ ] `docker-compose.yml` — orquestra backend + PostgreSQL + volume de uploads (Evolution API opcional)
 - [ ] `application-prod.yml` — remover defaults inseguros de `DB_PASSWORD` e `JWT_SECRET`; `STORAGE_PATH` deve apontar para volume persistente fora do working dir
 - [x] Rate limiting — `RateLimitFilter` (Bucket4j 8.10.1) em `POST /auth/register` (5/15min), `POST /auth/login` (10/15min), `POST /quotes` (5/15min); por IP com suporte a `X-Forwarded-For`; retorna `429` com JSON `ApiError`

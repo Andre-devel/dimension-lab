@@ -103,23 +103,15 @@ frontend/
 
 ## 🎨 5. Design System
 
-### Cores (Tailwind custom config)
+### Cores
 
 > Paleta extraída do logo Dimension.Lab3D — dark background com azul elétrico e roxo como acentos.
 
-```js
-colors: {
-  background:  '#0A0A0F',  // fundo principal — preto azulado profundo
-  surface:     '#12121A',  // cards, painéis
-  'surface-2': '#1C1C2E',  // hover, elementos elevados
-  border:      '#2A2A45',  // bordas e divisores
-  'accent-blue':   '#4D9FFF',  // azul elétrico — cor primária do logo
-  'accent-purple': '#8B5CF6',  // roxo — cor secundária do logo
-  'accent-glow':   '#2563EB',  // azul mais profundo para gradientes e glows
-  'text-primary':   '#F0F0FF',  // branco levemente azulado
-  'text-secondary': '#7A7A9A',  // texto secundário
-}
-```
+**Fonte única de verdade:** as cores estão definidas como variáveis CSS em `src/index.css` (`:root`), no formato `R G B` para suportar modificadores de opacidade do Tailwind (ex: `bg-accent-blue/20`). O `tailwind.config.ts` mapeia cada variável para um token Tailwind via `rgb(var(--c-*) / <alpha-value>)`.
+
+Tokens disponíveis: `background`, `surface`, `surface-2`, `border`, `accent-blue`, `accent-purple`, `accent-glow`, `text-primary`, `text-secondary`, `error`.
+
+> **Regra:** nunca use hex fixo para cores do design system — use os tokens Tailwind (`bg-accent-blue`, `text-error`, etc.) ou `rgb(var(--c-*))` em inline styles.
 
 ### Gradientes
 - **Accent gradient:** `from-[#4D9FFF] to-[#8B5CF6]` — usado em CTAs, badges de destaque, bordas ativas
@@ -357,7 +349,7 @@ interface ApiError {
 - [ ] Lighthouse score ≥ 90 (performance, acessibilidade) — não validado ainda
 - [ ] Remover arquivos de rascunho da raiz do repositório: `form.html`, `cubo-animation.txt`, `index.html`, `img.png`, `logo.jpeg`, `uploads/`
 - [ ] CI/CD (GitHub Actions): lint + test + build automático a cada PR
-- [ ] Tratamento de erro global (boundary ou interceptor que exibe tela de erro amigável em falhas inesperadas de API)
+- [x] Tratamento de erro global — `ErrorBoundary` (erros de renderização) + interceptor Axios para 5xx e sem conexão → `useToastStore`; `Toast` renderizado em `App.tsx`
 - [ ] `.env.example` para facilitar onboarding
 
 ---
