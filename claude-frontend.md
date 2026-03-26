@@ -339,7 +339,7 @@ interface ApiError {
 - [x] CI/CD — `ci-frontend.yml` (lint + test + build com Vitest coverage ≥ 80%); `cd.yml` dispara deploy ao VPS após ambos CIs passarem; autenticação de submodules privados via `MY_REPO_PAT`
 - [x] TypeScript build errors resolvidos — `vite.config.ts` importa de `vitest/config`; `@types/node` adicionado; non-null assertions em `Home`; `description?: string` em `PortfolioItem`; `?? ''` em `PortfolioDetail` e `QuoteRequest`
 - [x] Cobertura de testes ≥ 80% — 212 testes passando, 85% de cobertura de funções; novos testes: `Toast`, `CustomSelect`, `Carousel`, `BackButton`, `authService` expandido; `scrollBy` stub no `setup.ts`
-- [ ] Corrigir typo no `.env`: `VITE_YOUTUBE_URL=https://youtube.com/@dimen sionlab3d` tem espaço
+- [x] Corrigir typo no `.env`: `VITE_YOUTUBE_URL` tinha espaço — corrigido no VPS
 - [x] Substituir `alert()` e `window.confirm()` em `MyQuotes/index.tsx` por confirmação inline no card e banner de erro com mensagem do backend
 - [x] Sitemap dinâmico — `GET /sitemap.xml` no backend; `<link rel="sitemap">` no `index.html`
 - [x] `BackButton` aplicado em todas as páginas (QuoteDetail, PortfolioDetail, MyQuotes, Profile, QuoteRequest, NewPortfolioItem, EditPortfolioItem)
@@ -349,11 +349,11 @@ interface ApiError {
 - [x] Máscara de telefone brasileiro `(XX) XXXXX-XXXX` com validação Zod no formulário de orçamento
 - [x] `whatsapp_admin_number` adicionado à página de configurações do admin
 - [x] Ícones SVG substituem botões de texto (Editar/Desativar/Excluir) em `ColorsAdmin` e `MaterialsAdmin` — fix layout mobile
-- [ ] Lighthouse score ≥ 90 (performance, acessibilidade) — não validado ainda
-- [ ] Remover arquivos de rascunho da raiz do repositório: `form.html`, `cubo-animation.txt`, `index.html`, `img.png`, `logo.jpeg`, `uploads/`
+- [x] Lighthouse score ≥ 90 — performance 93, accessibility 100, best-practices 96, seo 100
+- [x] Remover arquivos de rascunho da raiz do repositório: `form.html`, `cubo-animation.txt`, `index.html`, `img.png`, `logo.jpeg`, `uploads/` — já removidos; `lighthouse-report.json` adicionado ao `.gitignore`
 - [x] CI/CD (GitHub Actions): lint + test + build automático — ver acima
 - [x] Tratamento de erro global — `ErrorBoundary` (erros de renderização) + interceptor Axios para 5xx e sem conexão → `useToastStore`; `Toast` renderizado em `App.tsx`
-- [ ] `.env.example` para facilitar onboarding
+- [x] `.env.example` para facilitar onboarding
 
 ---
 
