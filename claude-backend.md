@@ -90,12 +90,14 @@ frontend/
 
 ```
 Customer        — id, name, email, phone, oauthProvider, oauthId, passwordHash
-Quote           — id, customer, description, files[], material, color, quantity, finish, desiredDeadline, status, createdAt
-QuoteStatus     — RECEIVED | UNDER_REVIEW | APPROVED | PRINTING | READY | DELIVERED
+Quote           — id, customer, description, files[], material, color, quantity, desiredDeadline, portfolioItemId, status, createdAt
+QuoteStatus     — RECEIVED | UNDER_REVIEW | APPROVED | PRINTING | READY | DELIVERED | CANCELLED
 QuoteFile       — id, quote, filePath, fileType (IMAGE | VIDEO | MODEL_3D)
 PortfolioItem   — id, title, category, material, printTime, complexity, photos[], modelFile, visible
 Category        — id, name, slug
 ```
+
+**Regra de domínio:** `description` é opcional em `Quote` quando `portfolioItemId` estiver presente — o item do portfólio serve como referência suficiente.
 
 ---
 
@@ -229,8 +231,9 @@ Category        — id, name, slug
 - [x] `PUT /api/v1/colors/{id}` — editar nome e hex da cor (ADMIN)
 - [x] `DELETE /api/v1/colors/{id}` — remover cor (ADMIN); valida quotes vinculadas (409)
 - [x] **Configurações do site** — tabela `site_settings` (key/value) — V009 migration com seeds
-  - `GET /api/v1/settings` — retorna todas as configurações públicas (whatsapp_url, instagram_url, youtube_url)
+  - `GET /api/v1/settings` — retorna todas as configurações públicas (whatsapp_url, instagram_url, youtube_url, whatsapp_admin_number, bot_number)
   - `PUT /api/v1/settings/{key}` — atualiza valor (ADMIN)
+  - V014 migration: `bot_number` — número do WhatsApp bot usado no link "Solicitar via WhatsApp" no PortfolioDetail
 - [x] `PATCH /api/v1/auth/profile` — atualiza `name` e `phone` do cliente autenticado
 - [x] `GET /api/v1/auth/check-email?email=` — verifica se e-mail pertence a conta registrada (público)
 - [x] `GET /api/v1/auth/check-phone?phone=` — verifica se telefone pertence a conta registrada (público)
@@ -247,6 +250,10 @@ Category        — id, name, slug
 - [x] `GET /sitemap.xml` — `SitemapController` retorna XML com páginas estáticas + portfolio items visíveis; usa `FRONTEND_URL`; público no `SecurityConfig`
 - [x] CI/CD — GitHub Actions: `ci-backend.yml` (lint + test), `cd.yml` (deploy ao VPS via SSH após ambos CIs passarem); autenticação de submodules privados via secret `MY_REPO_PAT` com `token:` no checkout action
 - [x] Deploy em VPS — site no ar em `dimensionlab.tech` com HTTPS via Caddy (Let's Encrypt automático); Caddy faz proxy `/api/*` → backend:8080 e `/` → frontend:3000; subdomínio `evolution.dimensionlab.tech` → porta 8081
+- [x] `portfolioItemId` adicionado ao `QuoteResponse` — admin vê referência do portfólio no detalhe do orçamento
+- [x] `description` opcional em `Quote.builder()` quando `portfolioItemId` presente — regra validada no domínio; `@NotBlank` removido de `QuoteRequest` no layer de interfaces
+- [x] `CANCELLED` adicionado ao `QuoteStatus` — cancelamento pelo cliente via `PATCH /api/v1/quotes/{id}/cancel` (`CancelQuoteUseCase`)
+- [x] `EVOLUTION_API_KEY` mapeado no `docker-compose.yml` via `${EVOLUTION_API_KEY:-}`
 - [ ] Paginação em `GET /api/v1/quotes` (admin) — sem paginação a query cresce sem limite
 - [ ] Versão `0.0.1-SNAPSHOT` → `0.1.0` no `build.gradle`
 - [ ] Monitoramento: Actuator já expõe `/health` e `/info`; métricas (Prometheus/Grafana) são opcionais
@@ -276,4 +283,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-25 — Fase 4 concluída: docker-compose, CI/CD (GitHub Actions + MY_REPO_PAT para submodules privados), deploy no VPS com Caddy (HTTPS automático). Pendente: paginação de quotes admin, bump versão 0.1.0.*
+*Última atualização: 2026-03-26 — portfolioItemId em QuoteResponse; description opcional no Quote quando portfolioItemId presente; bot_number em site_settings (V014); EVOLUTION_API_KEY no docker-compose. Pendente: paginação de quotes admin, bump versão 0.1.0.*

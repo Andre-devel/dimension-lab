@@ -320,7 +320,7 @@ interface ApiError {
 - [x] Catálogo de cores (`/admin/colors`) — criar com hex + toggle ativo/inativo
 - [x] Editar e remover materiais — `MaterialsAdmin` com edição inline e exclusão (409 → mensagem de erro)
 - [x] Editar e remover cores — `ColorsAdmin` com edição inline (nome + hex picker) e exclusão (409 → mensagem de erro)
-- [x] Página de configurações do site (`/admin/settings`) — gerencia whatsapp_url, instagram_url, youtube_url via `GET/PUT /api/v1/settings`
+- [x] Página de configurações do site (`/admin/settings`) — gerencia whatsapp_url, instagram_url, youtube_url, whatsapp_admin_number, bot_number via `GET/PUT /api/v1/settings`
 
 ### Fase 4.5 — Perfil de Usuário e Segurança (concluída)
 - [x] Página `/profile` — editar nome e telefone; e-mail somente leitura; `PATCH /api/v1/auth/profile`
@@ -354,6 +354,10 @@ interface ApiError {
 - [x] CI/CD (GitHub Actions): lint + test + build automático — ver acima
 - [x] Tratamento de erro global — `ErrorBoundary` (erros de renderização) + interceptor Axios para 5xx e sem conexão → `useToastStore`; `Toast` renderizado em `App.tsx`
 - [x] `.env.example` para facilitar onboarding
+- [x] `bot_number` em `settingsService` e `SettingsAdmin` — link WhatsApp no `PortfolioDetail` usa `bot_number` da API (antes hardcoded)
+- [x] `portfolioItemId` em `Quote` type e exibido no `QuoteDetail` admin — card "Referência do Portfólio" com link para o item
+- [x] `QuoteRequest`: `description` não obrigatória quando `portfolioRef` está presente (validação frontend já tratava; backend removeu `@NotBlank` de `QuoteRequest` e `description` no `Quote.builder()` é opcional com `portfolioItemId`)
+- [x] `QuoteRequest`: color scroll fix — `id="color-field"` no container das swatches; `triggerShake` usa `scrollIntoView` + `focus`; `focusMap` inclui `color`; `scrollIntoView` stubado no `setup.ts`
 
 ---
 
@@ -381,4 +385,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-25 — Fase 5 em andamento: Dockerfile pronto, CI/CD rodando, deploy no VPS (dimensionlab.tech). TypeScript build corrigido. 212 testes passando, cobertura 85%. Pendente: typo no .env youtube, Lighthouse ≥ 90, remover arquivos rascunho da raiz, .env.example.*
+*Última atualização: 2026-03-26 — Fase 5 concluída. bot_number em settings; portfolioItemId no QuoteDetail admin; WhatsApp link dinâmico no PortfolioDetail; description opcional com portfolioRef; color scroll fix no QuoteRequest.*
