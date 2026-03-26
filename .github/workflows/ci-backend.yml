@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - 'backend/**'
+      - 'backend'
       - '.github/workflows/ci-backend.yml'
   pull_request:
     paths:
       - 'backend/**'
+      - 'backend'
       - '.github/workflows/ci-backend.yml'
   workflow_dispatch:
 
