@@ -271,6 +271,7 @@ interface ApiError {
 | @google/model-viewer | latest | Viewer 3D (STL/GLB) |
 | lucide-react | latest | Ícones |
 | react-helmet-async | 3 | Meta tags dinâmicas por página (SEO) |
+| @fingerprintjs/fingerprintjs | latest | Device fingerprinting para enriquecer eventos GA4 com `visitor_id` |
 
 > Qualquer nova biblioteca deve ser adicionada aqui com justificativa antes de instalar.
 
@@ -358,6 +359,10 @@ interface ApiError {
 - [x] `portfolioItemId` em `Quote` type e exibido no `QuoteDetail` admin — card "Referência do Portfólio" com link para o item
 - [x] `QuoteRequest`: `description` não obrigatória quando `portfolioRef` está presente (validação frontend já tratava; backend removeu `@NotBlank` de `QuoteRequest` e `description` no `Quote.builder()` é opcional com `portfolioItemId`)
 - [x] `QuoteRequest`: color scroll fix — `id="color-field"` no container das swatches; `triggerShake` usa `scrollIntoView` + `focus`; `focusMap` inclui `color`; `scrollIntoView` stubado no `setup.ts`
+- [x] Google Analytics 4 — eventos customizados via `src/utils/analytics.ts` (wrapper seguro de `gtag`): `login`, `sign_up`, `logout`, `quote_submitted`, `portfolio_item_viewed`
+- [x] FingerprintJS (open source) — inicializado em `App.tsx`; seta `visitor_id` como GA4 user property para rastrear visitantes anônimos entre sessões
+- [x] Navbar mobile — botão "Sair" movido para dentro do menu hamburguer (antes ficava fora, abaixo dos links)
+- [x] Hero desktop — seção inicial centralizada horizontalmente (`lg:justify-center` + removido `flex-1` do bloco de texto)
 
 ---
 
@@ -385,4 +390,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-26 — Fase 5 concluída. bot_number em settings; portfolioItemId no QuoteDetail admin; WhatsApp link dinâmico no PortfolioDetail; description opcional com portfolioRef; color scroll fix no QuoteRequest.*
+*Última atualização: 2026-03-26 — GA4 eventos customizados + FingerprintJS visitor_id; Navbar mobile botão Sair no menu; Hero desktop centralizado.*
