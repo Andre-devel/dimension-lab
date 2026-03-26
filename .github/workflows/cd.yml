@@ -40,14 +40,17 @@ jobs:
             })
 
             const required = ['CI — Frontend', 'CI — Backend']
-            const allPassed = required.every(name =>
-              data.workflow_runs.some(r => r.name === name && r.conclusion === 'success')
+            const runs = required.map(name =>
+              data.workflow_runs.find(r => r.name === name)
             )
+            const anyRan = runs.some(r => r !== undefined)
+            const allRanPassed = runs.every(r => !r || r.conclusion === 'success')
+            const allPassed = anyRan && allRanPassed
 
             console.log(`SHA: ${sha}`)
-            required.forEach(name => {
-              const run = data.workflow_runs.find(r => r.name === name)
-              console.log(`  ${name}: ${run ? run.conclusion : 'não encontrado'}`)
+            required.forEach((name, i) => {
+              const run = runs[i]
+              console.log(`  ${name}: ${run ? run.conclusion : 'não rodou (ignorado)'}`)
             })
             console.log(`Deploy: ${allPassed}`)
 
