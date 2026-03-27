@@ -363,6 +363,8 @@ interface ApiError {
 - [x] FingerprintJS (open source) — inicializado em `App.tsx`; seta `visitor_id` como GA4 user property para rastrear visitantes anônimos entre sessões
 - [x] Navbar mobile — botão "Sair" movido para dentro do menu hamburguer (antes ficava fora, abaixo dos links)
 - [x] Hero desktop — seção inicial centralizada horizontalmente (`lg:justify-center` + removido `flex-1` do bloco de texto)
+- [x] Padronização de fotos com IA (Gemini) — `portfolioService.standardizeImage(file)` chama `POST /api/v1/portfolio-items/standardize-image`; `PortfolioItemForm` exibe thumbnails das fotos selecionadas com botão ✨ IA por foto; clique padroniza via Gemini e substitui o arquivo in-place; spinner durante processamento; toast em caso de erro
+- [x] Prompt IA cadastrável — `gemini_image_prompt` adicionado ao `SiteSettings`; textarea na página Configurações (`/admin/settings`); backend lê prompt do banco via `SettingKey.GEMINI_IMAGE_PROMPT` a cada chamada; lança erro claro se prompt vazio; migration `V015`
 
 ---
 
@@ -390,4 +392,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-26 — GA4 eventos customizados + FingerprintJS visitor_id; Navbar mobile botão Sair no menu; Hero desktop centralizado.*
+*Última atualização: 2026-03-27 — Padronização de fotos com IA (Gemini) no PortfolioItemForm; prompt cadastrável via Settings admin.*
