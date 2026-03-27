@@ -272,6 +272,7 @@ interface ApiError {
 | lucide-react | latest | Ícones |
 | react-helmet-async | 3 | Meta tags dinâmicas por página (SEO) |
 | @fingerprintjs/fingerprintjs | latest | Device fingerprinting para enriquecer eventos GA4 com `visitor_id` |
+| react-easy-crop | 5 | Crop de imagem com aspect ratio fixo (9:16) e zoom no PortfolioItemForm |
 
 > Qualquer nova biblioteca deve ser adicionada aqui com justificativa antes de instalar.
 
@@ -365,6 +366,8 @@ interface ApiError {
 - [x] Hero desktop — seção inicial centralizada horizontalmente (`lg:justify-center` + removido `flex-1` do bloco de texto)
 - [x] Padronização de fotos com IA (Gemini) — `portfolioService.standardizeImage(file)` chama `POST /api/v1/portfolio-items/standardize-image`; `PortfolioItemForm` exibe thumbnails das fotos selecionadas com botão ✨ IA por foto; clique padroniza via Gemini e substitui o arquivo in-place; spinner durante processamento; toast em caso de erro
 - [x] Prompt IA cadastrável — `gemini_image_prompt` adicionado ao `SiteSettings`; textarea na página Configurações (`/admin/settings`); backend lê prompt do banco via `SettingKey.GEMINI_IMAGE_PROMPT` a cada chamada; lança erro claro se prompt vazio; migration `V015`
+- [x] `CropModal` component (`react-easy-crop`) — aspect ratio 9:16 fixo, zoom-only; `PortfolioItemForm` unifica fotos em `PhotoEntry[]` (existing | new); upload abre crop sequencial; IA abre crop antes de substituir; edição mostra thumbnails existentes com botões recortar/remover/IA; recortar existente faz fetch via path relativo (proxy Vite em dev, mesma origem em prod)
+- [x] Vite proxy em dev — `vite.config.ts` proxy `/api` e `/uploads` → `localhost:8080`; evita CORS ao fazer `fetch` de imagens existentes no `handleRecrop`
 
 ---
 
@@ -392,4 +395,4 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-*Última atualização: 2026-03-27 — Padronização de fotos com IA (Gemini) no PortfolioItemForm; prompt cadastrável via Settings admin.*
+*Última atualização: 2026-03-27 — CropModal 9:16 integrado ao upload, IA e edição de fotos existentes; Vite proxy para /api e /uploads em dev.*

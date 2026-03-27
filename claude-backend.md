@@ -257,6 +257,9 @@ Category        — id, name, slug
 - [x] Compressão de imagem — `LocalFileStorageAdapter` comprime automaticamente `FileType.IMAGE` via Thumbnailator (`net.coobird:thumbnailator:0.4.20`); busca binária de qualidade (0.40–0.90) para atingir `STORAGE_IMAGE_MAX_SIZE_KB` (default 500KB); resize para `STORAGE_IMAGE_MAX_WIDTH/HEIGHT` (default 1920×1920) sem upscale; PNG > limite convertido automaticamente para JPEG; fallback silencioso para bytes originais se imagem não puder ser parseada
 - [x] Upload organizado em subpastas — `FileStoragePort.store()` recebe `subfolder`; portfólio salva em `/uploads/portfolio/`, orçamentos em `/uploads/quotes/`; delete e serve `/uploads/**` continuam funcionando
 - [x] Delete de arquivos antigos no update do portfólio — `PortfolioController.update()` deleta fotos e modelFile anteriores do disco antes de salvar os novos
+- [x] `RestClientConfig` — bean explícito `RestClient.Builder` via `@Bean` em `infrastructure/config/RestClientConfig.java`; necessário porque Spring Boot 4.x não auto-configura mais esse bean (ao contrário do 3.x); injetado no `GeminiImageStandardizationAdapter`
+- [x] `GlobalExceptionHandler` — handler `HttpClientErrorException` para erros de APIs externas: 429 → 503 com mensagem clara sobre spending cap; outros → 502; evita NPE e expõe mensagem útil para o frontend
+- [x] `docker-compose.yml` — `GEMINI_API_KEY` e `GEMINI_IMAGE_MODEL` mapeados para o container backend via `${GEMINI_API_KEY:-}` e `${GEMINI_IMAGE_MODEL:-gemini-3.1-flash-image-preview}`; regra: sempre mapear nova env var no docker-compose ao adicioná-la no `.env.example`
 - [ ] Paginação em `GET /api/v1/quotes` (admin) — sem paginação a query cresce sem limite
 - [ ] Monitoramento: Actuator já expõe `/health` e `/info`; métricas (Prometheus/Grafana) são opcionais
 
@@ -285,4 +288,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-26 — compressão de imagem com Thumbnailator (busca binária, target 500KB, PNG→JPEG automático); subpastas portfolio/ e quotes/ em uploads; delete de arquivos antigos no update do portfólio. Pendente: paginação de quotes admin.*
+*Última atualização: 2026-03-27 — RestClientConfig bean explícito (Spring Boot 4.x compat); GlobalExceptionHandler para HttpClientErrorException (429→503, outros→502); GEMINI_API_KEY/MODEL mapeados no docker-compose. Pendente: paginação de quotes admin.*
