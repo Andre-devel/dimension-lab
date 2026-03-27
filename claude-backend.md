@@ -254,8 +254,10 @@ Category        — id, name, slug
 - [x] `description` opcional em `Quote.builder()` quando `portfolioItemId` presente — regra validada no domínio; `@NotBlank` removido de `QuoteRequest` no layer de interfaces
 - [x] `CANCELLED` adicionado ao `QuoteStatus` — cancelamento pelo cliente via `PATCH /api/v1/quotes/{id}/cancel` (`CancelQuoteUseCase`)
 - [x] `EVOLUTION_API_KEY` mapeado no `docker-compose.yml` via `${EVOLUTION_API_KEY:-}`
+- [x] Compressão de imagem — `LocalFileStorageAdapter` comprime automaticamente `FileType.IMAGE` via Thumbnailator (`net.coobird:thumbnailator:0.4.20`); busca binária de qualidade (0.40–0.90) para atingir `STORAGE_IMAGE_MAX_SIZE_KB` (default 500KB); resize para `STORAGE_IMAGE_MAX_WIDTH/HEIGHT` (default 1920×1920) sem upscale; PNG > limite convertido automaticamente para JPEG; fallback silencioso para bytes originais se imagem não puder ser parseada
+- [x] Upload organizado em subpastas — `FileStoragePort.store()` recebe `subfolder`; portfólio salva em `/uploads/portfolio/`, orçamentos em `/uploads/quotes/`; delete e serve `/uploads/**` continuam funcionando
+- [x] Delete de arquivos antigos no update do portfólio — `PortfolioController.update()` deleta fotos e modelFile anteriores do disco antes de salvar os novos
 - [ ] Paginação em `GET /api/v1/quotes` (admin) — sem paginação a query cresce sem limite
-- [ ] Versão `0.0.1-SNAPSHOT` → `0.1.0` no `build.gradle`
 - [ ] Monitoramento: Actuator já expõe `/health` e `/info`; métricas (Prometheus/Grafana) são opcionais
 
 ---
@@ -283,4 +285,4 @@ Idioma do código: English.
 
 ---
 
-*Última atualização: 2026-03-26 — portfolioItemId em QuoteResponse; description opcional no Quote quando portfolioItemId presente; bot_number em site_settings (V014); EVOLUTION_API_KEY no docker-compose. Pendente: paginação de quotes admin, bump versão 0.1.0.*
+*Última atualização: 2026-03-26 — compressão de imagem com Thumbnailator (busca binária, target 500KB, PNG→JPEG automático); subpastas portfolio/ e quotes/ em uploads; delete de arquivos antigos no update do portfólio. Pendente: paginação de quotes admin.*
