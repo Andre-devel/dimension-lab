@@ -56,6 +56,9 @@ services:
       EVOLUTION_API_KEY:      ${EVOLUTION_API_KEY:-}
       EVOLUTION_ADMIN_NUMBER: ${EVOLUTION_ADMIN_NUMBER:-}
 
+      GEMINI_API_KEY:         ${GEMINI_API_KEY:-}
+      GEMINI_IMAGE_MODEL:     ${GEMINI_IMAGE_MODEL:-gemini-3.1-flash-image-preview}
+
       SPRING_PROFILES_ACTIVE: prod
     ports:
       - "127.0.0.1:8080:8080"
