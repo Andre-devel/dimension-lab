@@ -240,19 +240,32 @@ interface ApiError {
 
 ---
 
-## 🔐 10. AI Jail (Regras para IA)
+## ✅ 10. Checklist obrigatório antes de todo commit
+
+Rodar os dois comandos abaixo **dentro de `frontend/`** antes de qualquer `git commit`:
+
+```bash
+npm run build   # tsc -b && vite build — detecta TS6133, TS2345 e erros de tipo
+npx vitest run  # roda todos os testes unitários
+```
+
+**Por quê:** o `tsconfig.app.json` tem `strict: true`, `noUnusedLocals: true` e `noUnusedParameters: true`. Qualquer variável ou parâmetro declarado e não usado quebra o `tsc -b` com `TS6133`, travando a pipeline de CI antes mesmo do Vite empacotar.
+
+---
+
+## 🔐 11. AI Jail (Regras para IA)
 
 - **Nunca criar componente sem teste**
 - **Nunca modificar estrutura sem explicar a razão**
 - **Sempre justificar decisões de arquitetura de componentes**
 - **Nunca instalar biblioteca sem registrar aqui o motivo**
-- **Sempre rodar testes após mudanças**
+- **Sempre rodar o checklist da seção 10 antes de commitar**
 - **Se errar: não corrigir manualmente — explicar o erro, atualizar este Cloud.md e pedir reexecução**
 - **Toda nova página pública deve incluir `<SEOHead>` com `title`, `description`, `canonical` e `jsonLd` adequado — sem exceção**
 
 ---
 
-## 📦 11. Bibliotecas Aprovadas
+## 📦 12. Bibliotecas Aprovadas
 
 | Biblioteca | Versão | Uso |
 |---|---|---|
@@ -278,7 +291,7 @@ interface ApiError {
 
 ---
 
-## 🚀 12. Plano de Fases
+## 🚀 13. Plano de Fases
 
 ### Fase 1 — Base e Formulário de Orçamento
 - [ ] Setup do projeto (Vite + TS + Tailwind + Router)
@@ -371,7 +384,7 @@ interface ApiError {
 
 ---
 
-## 🧠 13. Prompt Padrão para IA
+## 🧠 14. Prompt Padrão para IA
 
 ```
 Você é meu par de programação no frontend do Dimension.Lab3D.
@@ -387,7 +400,7 @@ Design system: dark theme azulado (#0A0A0F de fundo), acento azul elétrico (#4D
 
 ---
 
-## ⚠️ 14. Dívidas Técnicas Registradas
+## ⚠️ 15. Dívidas Técnicas Registradas
 
 | # | Arquivo | Descrição | Quando restaurar |
 |---|---|---|---|

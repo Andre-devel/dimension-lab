@@ -164,17 +164,29 @@ Category        — id, name, slug
 
 ---
 
-## 🔐 9. AI Jail (Regras para IA)
+## ✅ 9. Checklist obrigatório antes de todo commit
+
+Rodar o comando abaixo **dentro de `backend/`** antes de qualquer `git commit`:
+
+```bash
+JAVA_HOME=/c/Users/home/.jdks/corretto-25 ./gradlew clean test
+```
+
+**Por quê:** garante que nenhum teste quebrou com a mudança e que o build compila limpo antes de chegar na pipeline de CI.
+
+---
+
+## 🔐 10. AI Jail (Regras para IA)
 
 - **Nunca criar feature sem teste**
 - **Nunca modificar código sem explicar a razão**
 - **Sempre justificar decisões arquiteturais**
 - **Nunca acessar fora do workspace do projeto**
-- **Sempre rodar testes após mudanças**
+- **Sempre rodar o checklist da seção 9 antes de commitar**
 
 ---
 
-## 🚀 10. Plano de Fases
+## 🚀 11. Plano de Fases
 
 ### Fase 1 — MVP (Core do negócio)
 - [x] Configurar projeto Spring Boot com Clean Architecture
@@ -265,7 +277,7 @@ Category        — id, name, slug
 
 ---
 
-## 📊 11. Métricas
+## 📊 12. Métricas
 
 | Métrica | Meta |
 |---|---|
@@ -275,7 +287,7 @@ Category        — id, name, slug
 
 ---
 
-## 🧠 12. Prompt Padrão para IA
+## 🧠 13. Prompt Padrão para IA
 
 ```
 Você é meu par de programação neste projeto de impressão 3D.
